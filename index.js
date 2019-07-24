@@ -6,6 +6,14 @@ const mb = menubar({
   tooltip: "Remaining battery",
 });
 
+function sleep(timeMs) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve();
+    }, timeMs);
+  });
+}
+
 function getRemainingTime() {
   return new Promise((resolve, reject) => {
     exec('pmset -g batt|grep remaining|cut -d" " -f1,5', function(
@@ -44,15 +52,12 @@ function setRightClickMenu() {
 async function updateValue() {
   const remainingTime = await getRemainingTime();
   mb.tray.setTitle(remainingTime);
+  await sleep(10000);
+  updateValue();
 }
 
 mb.on("ready", () => {
   overrideClick();
   setRightClickMenu();
   updateValue();
-  setInterval(() => {
-    try {
-      updateValue();
-    } catch (e) {}
-  }, 10000);
 });
