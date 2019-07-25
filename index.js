@@ -2,17 +2,11 @@ const { menubar } = require("menubar");
 const { exec } = require("child_process");
 const { Menu } = require("electron");
 
+const UPDATE_INTERVAL = 10000;
+
 const mb = menubar({
   tooltip: "Remaining battery",
 });
-
-function sleep(timeMs) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve();
-    }, timeMs);
-  });
-}
 
 function getRemainingTime() {
   return new Promise((resolve, reject) => {
@@ -50,14 +44,33 @@ function setRightClickMenu() {
 }
 
 async function updateValue() {
-  const remainingTime = await getRemainingTime();
-  mb.tray.setTitle(remainingTime);
-  await sleep(10000);
-  updateValue();
+  try {
+    const remainingTime = await getRemainingTime();
+    mb.tray.setTitle(remainingTime);
+  } catch (e) {}
+}
+
+function startMonitoring() {
+  return setInterval(() => {
+    updateValue();
+  }, UPDATE_INTERVAL);
+}
+
+function stopMonitoring(intervalId) {
+  clearInterval(intervalId);
 }
 
 mb.on("ready", () => {
+  const { powerMonitor } = require("electron");
   overrideClick();
   setRightClickMenu();
-  updateValue();
+  updateValue(); // Init the remaining time
+  let intervalId = startMonitoring();
+  powerMonitor.on('suspend', () => {
+    stopMonitoring(intervalId);
+  });
+  powerMonitor.on('resume', () => {
+    updateValue();
+    intervalId = startMonitoring();
+  });
 });
