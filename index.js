@@ -16,9 +16,13 @@ function getRemainingTime() {
       stderr
     ) {
       if (stdout) {
-        resolve(String(stdout));
+        if (/\d{1,2}:\d{1,2}/g.test(stdout)) {
+          resolve(String(stdout));
+        } else {
+          resolve('');
+        }
       } else {
-        reject();
+        resolve('');
       }
     });
   });

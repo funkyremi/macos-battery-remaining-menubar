@@ -1,6 +1,6 @@
 {
   "name": "macos-battery-remaining-menubar",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The battery time remaining in your mac menubar",
   "main": "index.js",
   "author": "Rémi Testa",
@@ -12,7 +12,7 @@
   "build": {
     "appId": "com.funkyremi.battery-menubar",
     "productName": "Battery Remaining",
-    "buildVersion": "1.0.1",
+    "buildVersion": "1.0.2",
     "dmg": {
       "title": "Battery Remaining"
     }
