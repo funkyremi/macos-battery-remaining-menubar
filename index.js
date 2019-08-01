@@ -16,7 +16,7 @@ function getRemainingTime() {
       stderr
     ) {
       if (stdout) {
-        if (/\d{1,2}:\d{1,2}/g.test(stdout)) {
+        if (/\d{1,2}:\d{1,2}/g.test(stdout) && !/^\s0:00/.test(stdout)) {
           resolve(String(stdout));
         } else {
           resolve('');
